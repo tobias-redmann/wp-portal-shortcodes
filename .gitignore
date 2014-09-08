@@ -11,3 +11,23 @@ wp-content/cache/
 wp-content/backups/
 sitemap.xml.gz
 wp-config.php
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Build Tools
+.buildpath
+/target/
+/.externalToolBuilders/
+cache.properties
+hook.version
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
