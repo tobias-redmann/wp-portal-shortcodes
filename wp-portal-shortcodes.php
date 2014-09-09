@@ -12,9 +12,120 @@
 
 add_shortcode('category_sitemap',  'wp_portal_category_sitemap');
 
+add_shortcode('listview', 'wp_portal_listview');
 
-#add_shortcode('tag_index',         'wp_portal_tag_index');
+add_shortcode('lv', 'wp_portal_field');
 
+
+
+function wp_portal_listview($attr, $content)
+{
+
+    $GLOBALS['listview_posts'] = null;
+
+    $o = '';
+
+    // parse the attributes
+    $attr = shortcode_atts(
+        array(
+            'limit'         => 10,
+            'post_type'     => 'post',
+            'category'      => '',
+            'cat_id'        => '',
+            'tag'           => '',
+            'order'         => 'DESC',
+            'orderby'       => 'date'
+        ),
+        $attr,
+        'listview'
+    );
+
+
+    $limit = $attr['limit'];
+
+    unset($attr['limit']);
+
+    $attr['posts_per_page'] = $limit;
+
+
+    $category = $attr['category'];
+
+    unset($attr['category']);
+
+    $attr['category_name']  = $category;
+
+
+    $params = array();
+
+    foreach($attr as $key => $value) {
+
+        if ($value != '' && $value != null) {
+
+            $params[$key] = $value;
+
+        }
+
+    }
+
+
+    $GLOBALS['listview_posts'] = new WP_Query($params);
+
+    while ($GLOBALS['listview_posts']->have_posts()) {
+
+        $GLOBALS['listview_post'] = $GLOBALS['listview_posts']->next_post();
+
+        $o .= do_shortcode($content);
+
+
+    }
+
+    $o .= print_r($params, true);
+
+    return $o;
+
+}
+
+
+function wp_portal_field($attr, $content)
+{
+
+    global $listview_post;
+
+    $o = '';
+
+    $attr = shortcode_atts(
+        array(
+            'name'         => ''
+        ),
+        $attr,
+        'lv'
+    );
+
+
+    switch($attr['name']) {
+
+
+        case 'title':
+
+            $o .= get_the_title($listview_post->ID);
+
+            break;
+
+        case 'permalink':
+
+            $o .= get_permalink($listview_post->ID);
+
+            break;
+
+
+
+
+    }
+
+    return do_shortcode($o);
+
+
+}
 
 
 function wp_portal_category_sitemap($attr, $content)
